@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SolrPump.Net
+namespace SolrWind.Net
 {
     public class SolrOptimize : JsonObject
     {

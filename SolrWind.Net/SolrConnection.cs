@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SolrPump.Net
+namespace SolrWind.Net
 {
     public class SolrConnection
     {

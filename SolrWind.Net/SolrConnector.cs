@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace SolrPump.Net
+namespace SolrWind.Net
 {
     public class SolrConnector
     {

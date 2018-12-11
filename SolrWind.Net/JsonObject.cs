@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace SolrPump.Net
+namespace SolrWind.Net
 {
     public class JsonObject
     {

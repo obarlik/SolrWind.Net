@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolrPump.Net", "SolrPump.Net\SolrPump.Net.csproj", "{47589A7A-5E04-4A5A-8EB9-E796DCB2773D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolrWind.Net", "SolrWind.Net\SolrWind.Net.csproj", "{47589A7A-5E04-4A5A-8EB9-E796DCB2773D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolrPump.Tests", "SolrPump.Tests\SolrPump.Tests.csproj", "{407FAB5E-CB7A-46F7-9441-C4D61FB8D5C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolrWind.Tests", "SolrWind.Tests\SolrWind.Tests.csproj", "{407FAB5E-CB7A-46F7-9441-C4D61FB8D5C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

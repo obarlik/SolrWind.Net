@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SolrWind.Net;
 
-namespace SolrPump.Tests
+namespace SolrWind.Tests
 {
     [TestClass]
     public class SolrPumpTests
@@ -47,7 +48,7 @@ namespace SolrPump.Tests
                 }
             };
 
-            var solr = new SolrPump.Net.SolrConnector()
+            var solr = new SolrConnector()
             {
                 Host = "192.168.99.26"
             };
