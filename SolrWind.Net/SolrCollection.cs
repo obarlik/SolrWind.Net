@@ -10,20 +10,20 @@ using System.Threading.Tasks;
 
 namespace SolrWind.Net
 {
-    public class SolrConnection
+    public class SolrCollection
     {
-        public SolrConnection(SolrConnector connector, string collectionName)
+        public SolrCollection(SolrService connector, string collectionName)
         {
             Connector = connector;
             CollectionName = collectionName;
-            Client = connector.NewClient();
+            Client = new SolrClient();
         }
         
 
-        public SolrConnector Connector { get; }
+        public SolrService Connector { get; }
         public string CollectionName { get; }
 
-        WebClient Client;
+        SolrClient Client;
 
 
         public async Task Pump(IEnumerable source, CancellationToken cancellationToken)
@@ -41,7 +41,7 @@ namespace SolrWind.Net
                         if (++i % 1000 == 0)
                             Commit();
 
-                        Update(new SolrUpdate(item));
+                        Update(item);
                     }
                 }
                 catch
@@ -57,6 +57,18 @@ namespace SolrWind.Net
         }
 
 
+        Uri _CollectionUri;
+
+        public Uri CollectionUri
+        {
+            get
+            {
+                return _CollectionUri ??
+                      (_CollectionUri = Connector.NewCollectionUri(CollectionName));
+            }
+        }
+
+        
         Uri _UpdateUri;
 
         Uri UpdateUri
@@ -64,52 +76,38 @@ namespace SolrWind.Net
             get
             {
                 return _UpdateUri ??
-                      (_UpdateUri = new Uri(Connector.NewCollectionUri(CollectionName) + "/update"));
+                      (_UpdateUri = new Uri(CollectionUri + "/update"));
             }
         }
 
 
-        void Commit()
+        string Commit()
         {
-            Update(new SolrCommit());
+            return Post(new SolrCommit());
         }
 
 
-        void Optimize()
+        string Optimize()
         {
-            Update(new SolrOptimize());
+            return Post(new SolrOptimize());
         }
 
 
-        void Rollback()
+        string Update(object item)
         {
-            Update(new SolrRollback());
+            return Post(new SolrUpdate(item));
         }
 
 
-        void Update(JsonObject obj)
+        string Rollback()
         {
-            Client.Headers["Content-Type"] = "application/json";
-            Client.Encoding = Encoding.UTF8;
-            var json = obj.ToJson(Debugger.IsAttached);
+            return Post(new SolrRollback());
+        }
 
-            Debug.WriteLineIf(Debugger.IsAttached,
-                "Posting to " + UpdateUri 
-              + "\nData\n----------\n" + json);
 
-            Debug.Indent();
-
-            try
-            {
-                var result = Client.UploadString(UpdateUri, json);
-
-                Debug.WriteLineIf(Debugger.IsAttached,
-                    "Result\n------------\n" + result);
-            }
-            finally
-            {
-                Debug.Unindent();
-            }
+        string Post(JsonObject obj)
+        {
+            return Client.UploadJson(UpdateUri, obj);
         }
     }
 }

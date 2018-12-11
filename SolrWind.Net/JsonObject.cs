@@ -2,7 +2,7 @@
 
 namespace SolrWind.Net
 {
-    public class JsonObject
+    internal class JsonObject
     {
         public string ToJson(bool indented = false)
         {

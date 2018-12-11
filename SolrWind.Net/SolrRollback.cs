@@ -1,6 +1,6 @@
 ﻿namespace SolrWind.Net
 {
-    public class SolrRollback : JsonObject
+    internal class SolrRollback : JsonObject
     {
         public object rollback = new object();
     }

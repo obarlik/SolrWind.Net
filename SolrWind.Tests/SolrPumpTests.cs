@@ -48,12 +48,12 @@ namespace SolrWind.Tests
                 }
             };
 
-            var solr = new SolrConnector()
+            var solr = new SolrService()
             {
                 Host = "192.168.99.26"
             };
 
-            solr.NewConnection("Brands")
+            solr.GetCollection("Brands")
             .Pump(documents, CancellationToken.None)
             .Wait();
         }

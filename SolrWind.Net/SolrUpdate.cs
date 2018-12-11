@@ -1,6 +1,6 @@
 ﻿namespace SolrWind.Net
 {
-    public class SolrUpdate : JsonObject
+    internal class SolrUpdate : JsonObject
     {
         public class SolrAdd : JsonObject
         {

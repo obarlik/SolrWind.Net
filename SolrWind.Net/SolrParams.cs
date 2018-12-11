@@ -1,6 +1,6 @@
 ﻿namespace SolrWind.Net
 {
-    public class SolrParams : JsonObject
+    internal class SolrParams : JsonObject
     {
         public bool waitSearcher = true;
         public bool expungeDeletes = false;

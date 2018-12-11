@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SolrWind.Net
 {
-    public class SolrConnector
+    public class SolrService
     {
         public string Host = "localhost";
         public int Port = 8983;
@@ -15,16 +15,7 @@ namespace SolrWind.Net
         {
             get { return (UseSsl ? "https" : "http") + "://" + Host + ":" + Port + "/solr/"; }
         }
-
-
-        public WebClient NewClient()
-        {
-            return new WebClient()
-            {
-                BaseAddress = this.BaseAddress
-            };
-        }
-
+        
 
         public Uri NewCollectionUri(string collectionName)
         {
@@ -32,9 +23,9 @@ namespace SolrWind.Net
         }
 
 
-        public SolrConnection NewConnection(string collectionName)
+        public SolrCollection GetCollection(string collectionName)
         {
-            return new SolrConnection(this, collectionName);
+            return new SolrCollection(this, collectionName);
         }
     }
 }

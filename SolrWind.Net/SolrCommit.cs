@@ -1,6 +1,6 @@
 ﻿namespace SolrWind.Net
 {
-    public class SolrCommit : JsonObject
+    internal class SolrCommit : JsonObject
     {
         public SolrParams commit = new SolrParams();
     }

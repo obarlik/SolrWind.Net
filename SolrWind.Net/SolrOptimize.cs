@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SolrWind.Net
 {
-    public class SolrOptimize : JsonObject
+    internal class SolrOptimize : JsonObject
     {
         public SolrParams optimize = new SolrParams();
     }
