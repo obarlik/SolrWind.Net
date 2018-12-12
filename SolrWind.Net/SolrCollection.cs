@@ -16,44 +16,36 @@ namespace SolrWind.Net
         {
             Connector = connector;
             CollectionName = collectionName;
-            Client = new SolrClient();
         }
         
 
         public SolrService Connector { get; }
         public string CollectionName { get; }
 
-        SolrClient Client;
-
 
         public async Task Pump(IEnumerable source, CancellationToken cancellationToken)
         {
-            await Task.Run(() =>
+            var i = 0;
+
+            try
             {
-                var i = 0;
-
-                try
+                foreach (var item in source)
                 {
-                    foreach (var item in source)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                        if (++i % 1000 == 0)
-                            Commit();
+                    if (++i % 1000 == 0)
+                        await Commit();
 
-                        Update(item);
-                    }
+                    await Update(item);
                 }
-                catch
-                {
-                    Rollback();
-                    throw;
-                }
+            }
+            catch
+            {
+                await Rollback();
+                throw;
+            }
 
-                Commit();
-                Optimize();
-            },
-            cancellationToken);
+            await CommitAndOptimize();
         }
 
 
@@ -64,11 +56,23 @@ namespace SolrWind.Net
             get
             {
                 return _CollectionUri ??
-                      (_CollectionUri = Connector.NewCollectionUri(CollectionName));
+                      (_CollectionUri = new Uri(Connector.BaseAddress + "/" + CollectionName));
             }
         }
 
-        
+
+        public async Task<string> DeleteSingle(string id)
+        {
+            return await Post(new SolrDeleteSingle(id));
+        }
+
+
+        public async Task<string> DeleteQuery(string query)
+        {
+            return await Post(new SolrDeleteQuery(query));
+        }
+
+
         Uri _UpdateUri;
 
         Uri UpdateUri
@@ -81,33 +85,40 @@ namespace SolrWind.Net
         }
 
 
-        string Commit()
+        public async Task<string> Commit()
         {
-            return Post(new SolrCommit());
+            return await Post(new SolrCommit());
         }
 
 
-        string Optimize()
+        public async Task<string> Optimize()
         {
-            return Post(new SolrOptimize());
+            return await Post(new SolrOptimize());
         }
 
 
-        string Update(object item)
+        public async Task<string> CommitAndOptimize()
         {
-            return Post(new SolrUpdate(item));
+            await Commit();
+            return await Optimize();
         }
 
 
-        string Rollback()
+        public async Task<string> Update(object item)
         {
-            return Post(new SolrRollback());
+            return await Post(new SolrAdd(item));
         }
 
 
-        string Post(JsonObject obj)
+        public async Task<string> Rollback()
         {
-            return Client.UploadJson(UpdateUri, obj);
+            return await Post(new SolrRollback());
+        }
+
+
+        async Task<string> Post(JsonObject obj)
+        {
+            return await new SolrClient().UploadJsonAsync(UpdateUri, obj);
         }
     }
 }

@@ -7,21 +7,29 @@ namespace SolrWind.Net
 {
     public class SolrService
     {
-        public string Host = "localhost";
-        public int Port = 8983;
-        public bool UseSsl = false;
+        public string Host;
+        public int Port;
+        public bool UseSsl;
+        
+        public SolrService(string host = "localhost", int port = 8983, bool useSsl = false)
+        {
+            Host = host;
+            Port = port;
+            UseSsl = useSsl;
+        }
+
+
+        string _BaseAddress;
 
         public string BaseAddress
         {
-            get { return (UseSsl ? "https" : "http") + "://" + Host + ":" + Port + "/solr/"; }
+            get
+            {
+                return _BaseAddress ??
+                      (_BaseAddress = (UseSsl ? "https" : "http") + "://" + Host + ":" + Port + "/solr");
+            }
         }
         
-
-        public Uri NewCollectionUri(string collectionName)
-        {
-            return new Uri(new Uri(BaseAddress), collectionName);
-        }
-
 
         public SolrCollection GetCollection(string collectionName)
         {

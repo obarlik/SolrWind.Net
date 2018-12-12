@@ -48,13 +48,17 @@ namespace SolrWind.Tests
                 }
             };
 
-            var solr = new SolrService()
-            {
-                Host = "192.168.99.26"
-            };
+            var solr = new SolrService("192.168.99.26");
 
-            solr.GetCollection("Brands")
-            .Pump(documents, CancellationToken.None)
+            var coll = solr.GetCollection("Brands");
+            
+            coll.Pump(documents, CancellationToken.None)
+            .Wait();
+
+            coll.DeleteSingle("B2004/44966")
+            .Wait();
+
+            coll.CommitAndOptimize()
             .Wait();
         }
     }
