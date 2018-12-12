@@ -23,7 +23,7 @@ namespace SolrWind.Net
         public string CollectionName { get; }
 
 
-        public async Task Pump(IEnumerable source, CancellationToken cancellationToken)
+        public async Task DataPump(IEnumerable source, CancellationToken cancellationToken, Action<object, int> OnProgress = null)
         {
             var i = 0;
 
@@ -34,18 +34,20 @@ namespace SolrWind.Net
                     cancellationToken.ThrowIfCancellationRequested();
 
                     if (++i % 1000 == 0)
-                        await Commit();
+                        await CommitAsync();
 
-                    await Update(item);
+                    OnProgress?.Invoke(item, i);
+
+                    await UpdateAsync(item);
                 }
             }
             catch
             {
-                await Rollback();
+                await RollbackAsync();
                 throw;
             }
 
-            await CommitAndOptimize();
+            await CommitAndOptimizeAsync();
         }
 
 
@@ -61,17 +63,6 @@ namespace SolrWind.Net
         }
 
 
-        public async Task<string> DeleteSingle(string id)
-        {
-            return await Post(new SolrDeleteSingle(id));
-        }
-
-
-        public async Task<string> DeleteQuery(string query)
-        {
-            return await Post(new SolrDeleteQuery(query));
-        }
-
 
         Uri _UpdateUri;
 
@@ -84,41 +75,102 @@ namespace SolrWind.Net
             }
         }
 
-
-        public async Task<string> Commit()
+        
+        public string Commit()
         {
-            return await Post(new SolrCommit());
+            return Post(new SolrCommit());
         }
 
 
-        public async Task<string> Optimize()
+        public async Task<string> CommitAsync()
         {
-            return await Post(new SolrOptimize());
+            return await PostAsync(new SolrCommit());
         }
 
 
-        public async Task<string> CommitAndOptimize()
+        public string Optimize()
         {
-            await Commit();
-            return await Optimize();
+            return Post(new SolrOptimize());
         }
 
 
-        public async Task<string> Update(object item)
+        public async Task<string> OptimizeAsync()
         {
-            return await Post(new SolrAdd(item));
+            return await PostAsync(new SolrOptimize());
         }
 
 
-        public async Task<string> Rollback()
+        public string CommitAndOptimize()
         {
-            return await Post(new SolrRollback());
+            Commit();
+            return Optimize();
         }
 
 
-        async Task<string> Post(JsonObject obj)
+        public async Task<string> CommitAndOptimizeAsync()
+        {
+            await CommitAsync();
+            return await OptimizeAsync();
+        }
+        
+
+        public string Update(object item)
+        {
+            return Post(new SolrAdd(item));
+        }
+        
+
+        public async Task<string> UpdateAsync(object item)
+        {
+            return await PostAsync(new SolrAdd(item));
+        }
+
+
+        public string DeleteSingle(string id)
+        {
+            return Post(new SolrDeleteSingle(id));
+        }
+
+
+        public async Task<string> DeleteSingleAsync(string id)
+        {
+            return await PostAsync(new SolrDeleteSingle(id));
+        }
+
+
+        public string DeleteQuery(string query)
+        {
+            return Post(new SolrDeleteQuery(query));
+        }
+
+
+        public async Task<string> DeleteQueryAsync(string query)
+        {
+            return await PostAsync(new SolrDeleteQuery(query));
+        }
+
+
+        public string Rollback()
+        {
+            return Post(new SolrRollback());
+        }
+
+
+        public async Task<string> RollbackAsync()
+        {
+            return await PostAsync(new SolrRollback());
+        }
+
+
+        async Task<string> PostAsync(JsonObject obj)
         {
             return await new SolrClient().UploadJsonAsync(UpdateUri, obj);
+        }
+
+
+        string Post(JsonObject obj)
+        {
+            return new SolrClient().UploadJson(UpdateUri, obj);
         }
     }
 }

@@ -6,7 +6,7 @@ using SolrWind.Net;
 namespace SolrWind.Tests
 {
     [TestClass]
-    public class SolrPumpTests
+    public class FunctionalityTests
     {
         class Brand
         {
@@ -18,7 +18,7 @@ namespace SolrWind.Tests
         }
 
         [TestMethod]
-        public void TestPump()
+        public void DataPumpTest()
         {
             var documents = new[]
             {
@@ -52,14 +52,12 @@ namespace SolrWind.Tests
 
             var coll = solr.GetCollection("Brands");
             
-            coll.Pump(documents, CancellationToken.None)
+            coll.DataPump(documents, CancellationToken.None)
             .Wait();
 
-            coll.DeleteSingle("B2004/44966")
-            .Wait();
+            coll.DeleteSingle("B2004/44966");
 
-            coll.CommitAndOptimize()
-            .Wait();
+            coll.CommitAndOptimize();
         }
     }
 }

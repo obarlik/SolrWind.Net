@@ -26,7 +26,10 @@ namespace SolrWind.Net
             get
             {
                 return _BaseAddress ??
-                      (_BaseAddress = (UseSsl ? "https" : "http") + "://" + Host + ":" + Port + "/solr");
+                      (_BaseAddress = 
+                            string.Format(
+                                "{0}://{1}:{2}/solr", 
+                                (UseSsl ? "https" : "http"), Host, Port));
             }
         }
         

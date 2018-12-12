@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Json.Net;
+using System;
+using System.Globalization;
 
 namespace SolrWind.Net
 {
@@ -6,13 +8,12 @@ namespace SolrWind.Net
     {
         public string ToJson(bool indented = false)
         {
-            return JsonConvert.SerializeObject(
+            return JsonNet.Serialize(
                 this, 
-                indented ? Formatting.Indented : Formatting.None,
-                new JsonSerializerSettings()
-            {
-                DateFormatString = "yyyy'-'MM'-'ddTHH':'mm':'ssZ"
-            });
+                indented,
+                new JsonConverter<DateTime>(
+                    dt => dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss", CultureInfo.InvariantCulture),
+                    s => DateTime.ParseExact(s, "yyyy'-'MM'-'dd'T'HH':'mm':'ss", CultureInfo.InvariantCulture)));
         }
     }
 }
