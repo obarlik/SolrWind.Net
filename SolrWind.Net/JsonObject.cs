@@ -10,7 +10,6 @@ namespace SolrWind.Net
         {
             return JsonNet.Serialize(
                 this, 
-                indented,
                 new JsonConverter<DateTime>(
                     dt => dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss", CultureInfo.InvariantCulture),
                     s => DateTime.ParseExact(s, "yyyy'-'MM'-'dd'T'HH':'mm':'ss", CultureInfo.InvariantCulture)));

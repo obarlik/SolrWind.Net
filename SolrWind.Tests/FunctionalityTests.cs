@@ -54,6 +54,7 @@ namespace SolrWind.Tests
             
             coll.DataPump(documents, CancellationToken.None)
             .Wait();
+            
 
             coll.DeleteSingle("B2004/44966");
 

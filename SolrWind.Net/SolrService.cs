@@ -36,7 +36,7 @@ namespace SolrWind.Net
 
         public SolrCollection GetCollection(string collectionName)
         {
-            return new SolrCollection(this, collectionName);
+            return new SolrCollection(new Uri(BaseAddress + "/" + collectionName));
         }
     }
 }

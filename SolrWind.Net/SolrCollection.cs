@@ -12,15 +12,15 @@ namespace SolrWind.Net
 {
     public class SolrCollection
     {
-        public SolrCollection(SolrService connector, string collectionName)
-        {
-            Connector = connector;
-            CollectionName = collectionName;
-        }
-        
+        Uri UpdateUri;
+        Uri SelectUri;
 
-        public SolrService Connector { get; }
-        public string CollectionName { get; }
+
+        public SolrCollection(Uri collectionUri)
+        {
+            UpdateUri = new Uri(collectionUri + "/update");
+            SelectUri = new Uri(collectionUri + "/select");
+        }
 
 
         public async Task DataPump(IEnumerable source, CancellationToken cancellationToken, Action<object, int> OnProgress = null)
@@ -51,31 +51,13 @@ namespace SolrWind.Net
         }
 
 
-        Uri _CollectionUri;
-
         public Uri CollectionUri
         {
-            get
-            {
-                return _CollectionUri ??
-                      (_CollectionUri = new Uri(Connector.BaseAddress + "/" + CollectionName));
-            }
+            get;
+            internal set;
         }
 
 
-
-        Uri _UpdateUri;
-
-        Uri UpdateUri
-        {
-            get
-            {
-                return _UpdateUri ??
-                      (_UpdateUri = new Uri(CollectionUri + "/update"));
-            }
-        }
-
-        
         public string Commit()
         {
             return Post(new SolrCommit());
@@ -112,13 +94,13 @@ namespace SolrWind.Net
             await CommitAsync();
             return await OptimizeAsync();
         }
-        
+
 
         public string Update(object item)
         {
             return Post(new SolrAdd(item));
         }
-        
+
 
         public async Task<string> UpdateAsync(object item)
         {
@@ -172,5 +154,7 @@ namespace SolrWind.Net
         {
             return new SolrClient().UploadJson(UpdateUri, obj);
         }
+
     }
 }
+
